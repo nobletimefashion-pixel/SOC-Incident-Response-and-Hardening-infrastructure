@@ -200,12 +200,13 @@ Status: active
 
      To                         Action      From
      --                         ------      ----
-[ 1] 22                         ALLOW IN    Anywhere                  
-[ 2] 51820/udp                  ALLOW OUT   Anywhere                   (out)
-[ 3] 443/tcp                    ALLOW OUT   Anywhere                   (out)
-[ 4] 22 (v6)                    ALLOW IN    Anywhere (v6)             
-[ 5] 51820/udp (v6)             ALLOW OUT   Anywhere (v6)              (out)
-[ 6] 443/tcp (v6)               ALLOW OUT   Anywhere (v6)              (out)
+[ 1] Anywhere                   REJECT IN   192.170.70.70              
+[ 2] 22                         ALLOW IN    Anywhere                  
+[ 3] 51820/udp                  ALLOW OUT   Anywhere                   (out)
+[ 4] 443/tcp                    ALLOW OUT   Anywhere                   (out)
+[ 5] 22 (v6)                    ALLOW IN    Anywhere (v6)             
+[ 6] 51820/udp (v6)             ALLOW OUT   Anywhere (v6)              (out)
+[ 7] 443/tcp (v6)               ALLOW OUT   Anywhere (v6)              (out)
 
 
 
