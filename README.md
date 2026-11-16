@@ -134,8 +134,8 @@ sudo fail2ban-client status sshd
 **Verified Jail Output:**
 ```text
 Status for the jail: sshd
+Status for the jail: sshd
 |- Filter
-
 |  |- Currently failed:	0
 |  |- Total failed:	0
 |  `- Journal matches:	_SYSTEMD_UNIT=sshd.service + _COMM=sshd + _COMM=sshd-session
@@ -168,6 +168,48 @@ PORT     STATE SERVICE
 Nmap done: 1 IP address (1 host up) scanned in 105.61 seconds
 ```
 
+# results
+
+ sudo journalctl -u sshd -n 8 --no-pager
+Nov 16 10:08:21 darklord-hpmt41 systemd[1]: Starting OpenSSH Daemon...
+Nov 16 10:08:23 darklord-hpmt41 sshd[587]: Server listening on 0.0.0.0 port 22.
+Nov 16 10:08:23 darklord-hpmt41 sshd[587]: Server listening on :: port 22.
+Nov 16 10:08:23 darklord-hpmt41 systemd[1]: Started OpenSSH Daemon.
+Nov 16 11:13:39 darklord-hpmt41 sshd-session[19231]: Connection closed by 192.168.70.70 port 42989 [preauth]
+Nov 16 11:13:39 darklord-hpmt41 sshd-session[19236]: Connection closed by 192.168.70.70 port 41413 [preauth]
+Nov 16 11:13:40 darklord-hpmt41 sshd-session[19239]: Connection closed by 192.168.70.70 port 40101 [preauth]
+Nov 16 11:13:40 darklord-hpmt41 sshd-session[19242]: Connection closed by 192.168.70.70 port 54721 [preauth]
+
+# bash
+  sudo fail2ban-client status sshd
+  sudo journalctl -u fail2ban -n 10 --no-pager
+  sudo ufw status numbered
+
+Status for the jail: sshd
+|- Filter
+|  |- Currently failed:	0
+|  |- Total failed:	0
+|  `- Journal matches:	_SYSTEMD_UNIT=sshd.service + _COMM=sshd + _COMM=sshd-session
+`- Actions
+   |- Currently banned:	0
+   |- Total banned:	1
+   `- Banned IP list:	
+Nov 16 10:08:21 darklord-hpmt41 systemd[1]: Started Fail2Ban Service.
+Nov 16 10:08:52 darklord-hpmt41 fail2ban-server[585]: Server ready
+Status: active
+
+     To                         Action      From
+     --                         ------      ----
+[ 1] 22                         ALLOW IN    Anywhere                  
+[ 2] 51820/udp                  ALLOW OUT   Anywhere                   (out)
+[ 3] 443/tcp                    ALLOW OUT   Anywhere                   (out)
+[ 4] 22 (v6)                    ALLOW IN    Anywhere (v6)             
+[ 5] 51820/udp (v6)             ALLOW OUT   Anywhere (v6)              (out)
+[ 6] 443/tcp (v6)               ALLOW OUT   Anywhere (v6)              (out)
+
+
+
+
 ### Result Analysis
 * **`65533 filtered tcp ports`:** Confirms UFW is silently dropping unsolicited incoming packets across the port range.
 * **`22/tcp open ssh`:** Intentionally open for key-only SSH access, protected by Fail2ban.
@@ -180,3 +222,6 @@ Nmap done: 1 IP address (1 host up) scanned in 105.61 seconds
 * **Defense in Depth:** Combining network-level filtering (`ufw`), strong cryptographic authentication (`sshd`), and automated log-based banning (`fail2ban`) ensures no single failure compromises the host.
 * **Safe Configuration Practices:** Always verify SSH key logins and run `sshd -t` before disabling password authentication to prevent remote lockouts, and always store Fail2ban overrides in `jail.local`.
 * **System-Specific Auditing:** Checking actual log paths (`/var/log/auth.log` vs. `journald`) and service unit names (`sshd.service` vs. `ssh.service`) prevents silent configuration failures.
+
+
+
